@@ -1,44 +1,45 @@
 import streamlit as st
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 import math
 import pyvista as pv
 from stpyvista import stpyvista
+import random
+
+numDots = 100
+dots_x = np.random.rand(numDots)
+dots_y = np.random.rand(numDots)
 
 def draw_planet(planet):
-   ''' #Create a figure and axis for the circle planet
-    fig, ax = plt.subplots(figsize=(11, 11))
+    #Create a figure and axis for the circle planet
+    fig, ax = plt.subplots(figsize=(25, 25))
     ax.set_aspect('equal')
     ax.set_axis_off()
+    plt.rcParams['savefig.facecolor'] = '#021024'
 
     #Draw the circle planet with the chosen color
-    planet_to_draw = Circle((0.5, 0.5), planet.getSize() / 20, color=planet.getColor(), ec='black', lw=1)
+    hatch_pattern = planet.getPattern()
+
+    planet_to_draw = Circle((0.5, 0.5), planet.getSize(), color=planet.getColor(), ec='black', lw=1, hatch=hatch_pattern)
+
+    # creates random stars
+    dotSizes =  planet.getSize() * 0.01   
+    
 
     for moon in planet.getMoons():
-        moon_to_draw = Circle((0.5 + moon.getDistance() * math.cos(moon.getAngle() * math.pi / 180), 0.5 + moon.getDistance() * math.sin(moon.getAngle() * math.pi / 180)), moon.getSize() / 20,  color='grey' , ec='black', lw=1)
+        moon_to_draw = Circle((0.5 + moon.getDistance() * math.cos(moon.getAngle() * math.pi / 180), 0.5 + moon.getSize() + moon.getDistance() * math.sin(moon.getAngle() * math.pi / 180)), moon.getSize(),  color="#" + ("0" * (6 - len(moon.getColor()[2:]))) + moon.getColor()[2:], ec='black', lw=1)
         ax.add_patch(moon_to_draw)
-        st.toast('You created a moon', icon='🌙')
 
+    for i in range(numDots):
+            dots_x[i] += random.uniform(-0.001, 0.001) 
+            dots_y[i] += random.uniform(-0.001, 0.001) 
+            dot = plt.Circle((dots_x[i], dots_y[i]), dotSizes, color="#e6eff0")
+            ax.add_patch(dot)
 
     ax.add_patch(planet_to_draw)
 
+
     # Display the planet in Streamlit
-    st.pyplot(fig)  '''
-
-# Set up plotter
-plotter = pv.Plotter(window_size=[300, 300])
-
-# Create element
-sphere = pv.Sphere(phi_resolution=res, theta_resolution=res)
-plotter.add_mesh(sphere, name="sphere", show_edges=True)
-
-plotter.view_isometric()
-plotter.set_background("white")
-
-# Pass the plotter (not the mesh) to stpyvista
-stpyvista(plotter)
-
-
-
-
+    st.pyplot(fig)  
