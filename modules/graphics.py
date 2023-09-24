@@ -4,8 +4,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 import math
-import pyvista as pv
-from stpyvista import stpyvista
 import random
 
 numDots = 100
